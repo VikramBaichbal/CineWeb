@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineWeb Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b0b0b;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #111;
+      border-bottom: 1px solid #222;
+      padding: 18px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .logo span {
+      color: #ff0000;
+    }
+
+    .back {
+      color: #aaa;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #999;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: #151515;
+      border: 1px solid #292929;
+      border-radius: 14px;
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+
+    .card h2 {
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      background: #0d0d0d;
+      color: #fff;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 13px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #ff0000;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 13px 22px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .add-btn {
+      background: #ff0000;
+      color: white;
+      margin-top: 20px;
+    }
+
+    .add-btn:hover {
+      background: #d90000;
+    }
+
+    .status {
+      margin-top: 15px;
+      color: #aaa;
+    }
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      header {
+        padding: 15px;
+      }
+
+      .container {
+        padding: 20px 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">Cine<span>Web</span> Admin</div>
+    <a class="back" href="index.html">← Back to CineWeb</a>
+  </header>
+
+  <main class="container">
+
+    <h1>Admin Dashboard</h1>
+    <p class="subtitle">
+      Manage movies displayed on your CineWeb website.
+    </p>
+
+    <section class="card">
+      <h2>➕ Add New Movie</h2>
+
+      <div class="grid">
+
+        <input id="title" type="text" placeholder="Movie title">
+
+        <input id="year" type="number" placeholder="Release year">
+
+        <input id="genre"
