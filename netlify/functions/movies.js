@@ -1,9 +1,6 @@
-const { createClient } = require("@supabase/supabase-js");
-
 exports.handler = async function () {
   try {
     const supabaseUrl = process.env.SUPABASE_URL;
-
     const supabaseKey =
       process.env.SUPABASE_SECRET_KEY ||
       process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -15,29 +12,35 @@ exports.handler = async function () {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          error: "Supabase environment variables are not configured."
+          error: "Supabase environment variables are missing"
         })
       };
     }
 
-    const supabase = createClient(
-      supabaseUrl,
-      supabaseKey
+    const response = await fetch(
+      `${supabaseUrl}/rest/v1/movies?select=*`,
+      {
+        method: "GET",
+        headers: {
+          "apikey": supabaseKey,
+          "Authorization": `Bearer ${supabaseKey}`,
+          "Content-Type": "application/json"
+        }
+      }
     );
 
-    const { data, error } = await supabase
-      .from("movies")
-      .select("*")
-      .order("id", { ascending: true });
+    const text = await response.text();
 
-    if (error) {
+    if (!response.ok) {
       return {
-        statusCode: 500,
+        statusCode: response.status,
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          error: error.message
+          error: "Supabase REST API error",
+          status: response.status,
+          response: text
         })
       };
     }
@@ -48,23 +51,22 @@ exports.handler = async function () {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*"
       },
-      body: JSON.stringify(data)
+      body: text
     };
 
   } catch (error) {
-  console.error("Supabase connection error:", error);
-  console.error("Cause:", error?.cause);
+    console.error("REST connection error:", error);
 
-  return {
-    statusCode: 500,
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      error: error.message,
-      cause: error?.cause?.message || null,
-      code: error?.cause?.code || null
-    })
-  };
+    return {
+      statusCode: 500,
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        error: error.message,
+        cause: error?.cause?.message || null,
+        code: error?.cause?.code || null
+      })
+    };
   }
 };
