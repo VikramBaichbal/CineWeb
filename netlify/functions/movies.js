@@ -52,14 +52,19 @@ exports.handler = async function () {
     };
 
   } catch (error) {
-    return {
-      statusCode: 500,
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        error: error.message
-      })
-    };
+  console.error("Supabase connection error:", error);
+  console.error("Cause:", error?.cause);
+
+  return {
+    statusCode: 500,
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      error: error.message,
+      cause: error?.cause?.message || null,
+      code: error?.cause?.code || null
+    })
+  };
   }
 };
