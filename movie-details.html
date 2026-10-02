@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Movie Details | CineWeb</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="index.html">Cine<span>Web</span></a><a class="back" href="index.html">← Home</a></header>
+<main id="detailRoot" class="detail-page">
+  <div class="detail-backdrop" id="detailBackdrop"></div><div class="detail-shade"></div>
+  <div class="detail-content">
+    <div class="detail-poster"><img id="poster" alt=""></div>
+    <div class="detail-copy"><span class="pill red">MOVIE DETAILS</span><h1 id="title"></h1><div id="meta" class="hero-meta"></div><p id="description" class="detail-description"></p><div id="facts" class="facts"></div><div class="actions"><button id="detailTrailer" class="btn primary">▶ Trailer</button><button id="watchlist" class="btn ghost">♡ Add to Watchlist</button></div></div>
+  </div>
+</main>
+<section class="section"><div class="section-title"><div><p class="kicker">YOU MAY ALSO LIKE</p><h2>Related Movies</h2></div></div><div id="related" class="movie-grid"></div></section>
+<div id="detailModal" class="modal"><div class="modal-card"><button class="close" id="closeDetail">×</button><div class="video-placeholder"><div><div class="play">▶</div><h3>Trailer</h3><p>Replace this placeholder with an authorized trailer embed.</p></div></div></div></div>
+<footer><a class="brand" href="index.html">Cine<span>Web</span></a><p>Discover movies. Explore stories.</p><small>© 2026 CineWeb</small></footer>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#080808">
+<title>CineWeb | Movies</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">Cine<span>Web</span></a>
+  <nav id="nav"><a href="#home">Home</a><a href="#trending">Trending</a><a href="#languages">Languages</a><a href="#genres">Genres</a></nav>
+  <div class="top-actions"><button id="searchBtn" aria-label="Search">⌕</button><button id="menuBtn" aria-label="Menu">☰</button></div>
+</header>
+
+<div id="searchPanel" class="search-panel">
+  <div class="search-inner"><span>⌕</span><input id="searchInput" type="search" placeholder="Search title, language or genre..."><button id="clearSearch">×</button></div>
+</div>
+
+<section id="home" class="hero">
+  <div class="hero-backdrop" id="heroBackdrop"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="pill red">FEATURED</span>
+    <h1 id="heroTitle">The Last Horizon</h1>
+    <div id="heroMeta" class="hero-meta"></div>
+    <p id="heroDesc"></p>
+    <div class="actions"><button id="heroTrailer" class="btn primary">▶ Trailer</button><button id="heroInfo" class="btn ghost">More Info</button></div>
+  </div>
+  <div class="hero-dots" id="heroDots"></div>
+</section>
+
+<main>
+<section id="trending" class="section">
+  <div class="section-title"><div><p class="kicker">DISCOVER</p><h2>Trending Now</h2></div><span id="count"></span></div>
+  <div id="movieGrid" class="movie-grid"></div><p id="empty" class="empty">No movies match your search.</p>
+</section>
+
+<section id="languages" class="section compact">
+  <div class="section-title"><div><p class="kicker">EXPLORE</p><h2>Languages</h2></div></div>
+  <div id="languagesList" class="chips"></div>
+</section>
+
+<section id="genres" class="section compact">
+  <div class="section-title"><div><p class="kicker">EXPLORE</p><h2>Genres</h2></div></div>
+  <div id="genresList" class="chips"></div>
+</section>
+
+<section class="section">
+  <div class="section-title"><div><p class="kicker">JUST ADDED</p><h2>Latest Movies</h2></div></div>
+  <div id="latestGrid" class="movie-grid"></div>
+</section>
+</main>
+
+<div id="trailerModal" class="modal"><div class="modal-card"><button class="close" id="closeTrailer">×</button><div class="video-placeholder"><div><div class="play">▶</div><h3>Trailer</h3><p>Replace this placeholder with a trailer you are authorized to embed.</p></div></div></div></div>
+
+<footer><a class="brand" href="index.html">Cine<span>Web</span></a><p>Discover movies. Explore stories.</p><small>© 2026 CineWeb</small></footer>
+<script src="script.js"></script>
+</body>
+</html>
