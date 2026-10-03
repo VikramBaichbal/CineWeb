@@ -12,7 +12,7 @@ exports.handler = async function (event) {
     }
 
     // Server-side environment variables
-    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseUrl = process.env.SUPABASE_PUBLIC_URL;
     const supabaseSecretKey =
       process.env.SUPABASE_SECRET_KEY ||
       process.env.SUPABASE_SERVICE_ROLE_KEY;
