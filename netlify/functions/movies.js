@@ -1,6 +1,6 @@
 exports.handler = async function () {
   try {
-    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseUrl = process.env.SUPABASE_PUBLIC_URL;
     const supabaseKey =
       process.env.SUPABASE_SECRET_KEY ||
       process.env.SUPABASE_SERVICE_ROLE_KEY;
