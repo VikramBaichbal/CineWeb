@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineWeb Admin</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+
+    body{
+      font-family:Arial,sans-serif;
+      background:#0b0b0b;
+      color:#fff;
+      min-height:100vh;
+    }
+
+    header{
+      background:#111;
+      border-bottom:1px solid #292929;
+      padding:16px 22px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:15px;
+      position:sticky;
+      top:0;
+      z-index:10;
+    }
+
+    .logo{font-size:27px;font-weight:800}
+    .logo span{color:#ff0000}
+
+    .header-actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .back{
+      color:#bbb;
+      text-decoration:none;
+      font-size:14px;
+    }
+
+    button{
+      border:0;
+      border-radius:8px;
+      padding:13px 20px;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    button:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    .primary{background:#ff0000;color:white}
+    .primary:hover{background:#d90000}
+
+    .secondary{
+      background:#292929;
+      color:white;
+      border:1px solid #444;
+    }
+
+    .logout{
+      background:#292929;
+      color:white;
+      border:1px solid #444;
+      padding:9px 14px;
+    }
+
+    .danger{
+      background:#7d1111;
+      color:#fff;
+      border:1px solid #a52222;
+    }
+
+    .container{
+      max-width:1100px;
+      margin:auto;
+      padding:28px 18px 50px;
+    }
+
+    h1{font-size:32px;margin-bottom:8px}
+
+    .subtitle{
+      color:#999;
+      margin-bottom:25px;
+    }
+
+    .card{
+      background:#151515;
+      border:1px solid #292929;
+      border-radius:14px;
+      padding:22px;
+      margin-bottom:22px;
+    }
+
+    .card h2{margin-bottom:18px}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+    }
+
+    input,textarea,select{
+      width:100%;
+      background:#0d0d0d;
+      color:white;
+      border:1px solid #383838;
+      border-radius:8px;
+      padding:13px;
+      font-size:15px;
+      outline:none;
+    }
+
+    input:focus,textarea:focus,select:focus{
+      border-color:#ff0000;
+    }
+
+    textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+
+    .full{grid-column:1/-1}
+
+    .status{
+      margin-top:14px;
+      color:#aaa;
+      min-height:20px;
+      line-height:1.5;
+    }
+
+    .hidden{display:none!important}
+
+    #loginScreen{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .login-card{
+      width:100%;
+      max-width:430px;
+      background:#151515;
+      border:1px solid #292929;
+      border-radius:16px;
+      padding:28px;
+    }
+
+    .login-card h1{
+      font-size:28px;
+      margin-bottom:8px;
+    }
+
+    .login-card p{
+      color:#999;
+      margin-bottom:22px;
+    }
+
+    .login-card input{margin-bottom:12px}
+    .login-card button{width:100%}
+
+    /* Media uploads */
+    .media-box{
+      margin-top:20px;
+      padding:18px;
+      background:#101010;
+      border:1px solid #292929;
+      border-radius:12px;
+    }
+
+    .media-box h3{
+      margin-bottom:8px;
+      font-size:19px;
+    }
+
+    .media-help{
+      color:#999;
+      font-size:13px;
+      line-height:1.5;
+      margin-bottom:16px;
+    }
+
+    .upload-row{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:center;
+      margin-bottom:8px;
+    }
+
+    .upload-row input[type="file"]{
+      padding:10px;
+    }
+
+    .upload-status{
+      color:#aaa;
+      font-size:13px;
+      min-height:20px;
+      margin-bottom:14px;
+    }
+
+    .progress-wrap{
+      display:none;
+      margin:8px 0 14px;
+    }
+
+    .progress-wrap.show{display:block}
+
+    .progress{
+      width:100%;
+      height:8px;
+      accent-color:#ff0000;
+    }
+
+    .progress-label{
+      color:#888;
+      font-size:12px;
+      margin-top:5px;
+    }
+
+    .preview{
+      display:none;
+      width:100%;
+      max-height:230px;
+      object-fit:contain;
+      background:#000;
+      border:1px solid #292929;
+      border-radius:10px;
+      margin-top:10px;
+    }
+
+    .video-preview{
+      display:none;
+      width:100%;
+      max-height:300px;
+      background:#000;
+      border-radius:10px;
+      margin-top:10px;
+    }
+
+    /* Dashboard statistics + search */
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-bottom:22px;
+    }
+    .stat{
+      background:#101010;
+      border:1px solid #292929;
+      border-radius:12px;
+      padding:16px;
+    }
+    .stat strong{display:block;font-size:26px;margin-bottom:5px}
+    .stat span{color:#999;font-size:13px}
+    .admin-search{margin-bottom:14px}
+    .movie-thumb{width:48px;height:68px;object-fit:cover;border-radius:6px;flex:none;background:#222}
+    .movie-main{display:flex;align-items:center;gap:12px;min-width:0}
+    .movie-info{min-width:0}
+    .movie-info strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .edit-mode{
+      display:none;
+      margin-bottom:18px;
+      padding:10px 12px;
+      border-radius:8px;
+      background:#221b00;
+      border:1px solid #665300;
+      color:#ffd21c;
+      font-size:13px;
+    }
+    .edit-mode.show{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    @media(max-width:700px){
+      .stats-grid{grid-template-columns:repeat(2,1fr)}
+    }
+
+    .movie-list{
+      display:grid;
+      gap:12px;
+    }
+
+    .movie-item{
+      padding:15px;
+      background:#0e0e0e;
+      border:1px solid #292929;
+      border-radius:10px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:15px;
+    }
+
+    .movie-info strong{
+      display:block;
+      margin-bottom:5px;
+    }
+
+    .movie-info small{color:#999}
+
+    .movie-actions{
+      display:flex;
+      gap:8px;
+      flex-shrink:0;
+    }
+
+    .empty{
+      color:#888;
+      padding:10px 0;
+    }
+
+    @media(max-width:700px){
+      header{padding:14px}
+      .logo{font-size:23px}
+      .back{display:none}
+      .container{padding:22px 14px 40px}
+      h1{font-size:27px}
+      .grid{grid-template-columns:1fr}
+      .full{grid-column:auto}
+      .card{padding:17px}
+      .upload-row{grid-template-columns:1fr}
+      .upload-row button{width:100%}
+      .movie-item{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+      .movie-actions{width:100%}
+      .movie-actions button{flex:1}
+    }
+  </style>
+</head>
+
+<body>
+
+<section id="loginScreen">
+  <div class="login-card">
+    <div class="logo">Cine<span>Web</span> Admin</div>
+    <h1 style="margin-top:18px">Admin Login</h1>
+    <p>Sign in to manage CineWeb movies.</p>
+
+    <input id="loginEmail" type="email" placeholder="Admin email" autocomplete="email">
+    <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+
+    <button id="loginBtn" class="primary" type="button">Login</button>
+    <div id="loginStatus" class="status"></div>
+  </div>
+</section>
+
+<div id="dashboard" class="hidden">
+
+  <header>
+    <div class="logo">Cine<span>Web</span> Admin</div>
+
+    <div class="header-actions">
+      <a class="back" href="index.html">← Back to CineWeb</a>
+      <button id="logoutBtn" class="logout" type="button">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <h1>Admin Dashboard</h1>
+    <p class="subtitle">Manage movies, images, trailers and movie videos.</p>
+
+    <section class="stats-grid">
+      <div class="stat"><strong id="statTotal">0</strong><span>Total Movies</span></div>
+      <div class="stat"><strong id="statLanguages">0</strong><span>Languages</span></div>
+      <div class="stat"><strong id="statGenres">0</strong><span>Genres</span></div>
+      <div class="stat"><strong id="statMedia">0</strong><span>With Video/Trailer</span></div>
+    </section>
+
+    <section class="card">
+
+      <div id="editMode" class="edit-mode">
+        <span>✏️ Editing movie: <strong id="editingTitle">Movie</strong></span>
+        <button id="cancelEditBtn" class="secondary" type="button">Cancel Edit</button>
+      </div>
+
+      <h2 id="movieFormHeading">➕ Add New Movie</h2>
+
+      <div class="grid">
+
+        <input id="title" type="text" placeholder="Movie title">
+        <input id="year" type="number" placeholder="Release year">
+
+        <input id="genre" type="text" placeholder="Genre">
+        <input id="language" type="text" placeholder="Language">
+
+        <input id="rating" type="number" step="0.1" min="0" max="10" placeholder="Rating">
+        <input id="director" type="text" placeholder="Director">
+
+        <input id="cast_members" class="full" type="text" placeholder="Cast members">
+
+        <textarea id="description" class="full" placeholder="Movie description"></textarea>
+
+        <input id="poster" class="full" type="url" placeholder="Poster image URL">
+        <input id="backdrop" class="full" type="url" placeholder="Backdrop image URL">
+
+      </div>
+
+      <div class="media-box">
+
+        <h3>📁 Upload Movie Media</h3>
+
+        <p class="media-help">
+          You can upload images, a trailer and the full movie.
+          Uploaded files are stored in Supabase Storage.
+        </p>
+
+        <!-- Poster -->
+        <div class="upload-row">
+          <input id="posterFile" type="file" accept="image/*">
+          <button id="uploadPosterBtn" class="secondary" type="button">
+            🖼️ Upload Poster
+          </button>
+        </div>
+        <div id="posterUploadStatus" class="upload-status"></div>
+
+        <!-- Backdrop -->
+        <div class="upload-row">
+          <input id="backdropFile" type="file" accept="image/*">
+          <button id="uploadBackdropBtn" class="secondary" type="button">
+            🌄 Upload Backdrop
+          </button>
+        </div>
+        <div id="backdropUploadStatus" class="upload-status"></div>
+
+        <!-- Trailer -->
+        <div class="upload-row">
+          <input id="trailerFile" type="file" accept="video/*">
+          <button id="uploadTrailerBtn" class="secondary" type="button">
+            🎞️ Upload Trailer
+          </button>
+        </div>
+        <div id="trailerUploadStatus" class="upload-status"></div>
+        <div id="trailerProgressWrap" class="progress-wrap">
+          <progress id="trailerProgress" class="progress" value="0" max="100"></progress>
+          <div id="trailerProgressLabel" class="progress-label">0%</div>
+        </div>
+
+        <!-- Full movie -->
+        <div class="upload-row">
+          <input id="movieVideoFile" type="file" accept="video/*">
+          <button id="uploadMovieVideoBtn" class="secondary" type="button">
+            🎬 Upload Movie Video
+          </button>
+        </div>
+        <div id="movieVideoUploadStatus" class="upload-status"></div>
+        <div id="movieVideoProgressWrap" class="progress-wrap">
+          <progress id="movieVideoProgress" class="progress" value="0" max="100"></progress>
+          <div id="movieVideoProgressLabel" class="progress-label">0%</div>
+        </div>
+
+        <input id="trailerUrl" type="hidden">
+        <input id="movieVideoUrl" type="hidden">
+
+        <img id="posterPreview" class="preview" alt="Poster preview">
+        <img id="backdropPreview" class="preview" alt="Backdrop preview">
+
+        <video id="trailerPreview" class="video-preview" controls></video>
+        <video id="movieVideoPreview" class="video-preview" controls></video>
+
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+        <button id="addMovieBtn" class="primary" type="button">
+          Add Movie
+        </button>
+        <button id="cancelEditBtn2" class="secondary hidden" type="button">
+          Cancel Edit
+        </button>
+      </div>
+
+      <div id="movieStatus" class="status"></div>
+
+    </section>
+
+    <section class="card">
+
+      <h2>🎬 Movies in CineWeb</h2>
+
+      <input id="movieSearch" class="admin-search" type="search" placeholder="🔍 Search movies by title, genre, language...">
+
+      <div id="movieList" class="movie-list">
+        <div class="empty">Loading movies...</div>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<script>
+  /*
+    =====================================================
+    SUPABASE CONFIGURATION
+    =====================================================
+    Use your existing PUBLISHABLE key here.
+    NEVER put sb_secret_... in this file.
+  */
+
+  const SUPABASE_URL =
+    "https://euutkrnurpbefkabchqj.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "PASTE_YOUR_EXISTING_SUPABASE_PUBLISHABLE_KEY_HERE";
+
+  const loginStatus =
+    document.getElementById("loginStatus");
+
+  if (!window.supabase) {
+    loginStatus.textContent =
+      "❌ Supabase library failed to load. Please refresh the page.";
+    throw new Error("Supabase JavaScript library was not loaded.");
+  }
+
+  let supabaseClient;
+
+  try {
+    supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+      );
+  } catch (error) {
+    loginStatus.textContent =
+      "❌ Supabase configuration error.";
+    console.error(error);
+    throw error;
+  }
+
+  const loginScreen =
+    document.getElementById("loginScreen");
+
+  const dashboard =
+    document.getElementById("dashboard");
+
+  const movieStatus =
+    document.getElementById("movieStatus");
+
+  const movieList =
+    document.getElementById("movieList");
+
+  let allMovies = [];
+  let editingMovieId = null;
+
+  function showDashboard() {
+    loginScreen.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    loadMovies();
+  }
+
+  function showLogin() {
+    dashboard.classList.add("hidden");
+    loginScreen.classList.remove("hidden");
+  }
+
+  /* =====================================================
+     LOGIN
+     ===================================================== */
+
+  document
+    .getElementById("loginBtn")
+    .addEventListener("click", async function () {
+
+      const email =
+        document.getElementById("loginEmail").value.trim();
+
+      const password =
+        document.getElementById("loginPassword").value;
+
+      if (!email || !password) {
+        loginStatus.textContent =
+          "❌ Enter your email and password.";
+        return;
+      }
+
+      loginStatus.textContent = "Signing in...";
+
+      try {
+        const { data, error } =
+          await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+          });
+
+        if (error) {
+          loginStatus.textContent =
+            "❌ " + error.message;
+          return;
+        }
+
+        if (!data || !data.session) {
+          loginStatus.textContent =
+            "❌ Login failed: no session was returned.";
+          return;
+        }
+
+        loginStatus.textContent = "";
+        showDashboard();
+
+      } catch (error) {
+        console.error(error);
+        loginStatus.textContent =
+          "❌ " +
+          (error.message || "Unable to connect to Supabase.");
+      }
+    });
+
+  /* =====================================================
+     LOGOUT
+     ===================================================== */
+
+  document
+    .getElementById("logoutBtn")
+    .addEventListener("click", async function () {
+      await supabaseClient.auth.signOut();
+      showLogin();
+    });
+
+  /* =====================================================
+     LOAD MOVIES
+     ===================================================== */
+
+  async function loadMovies() {
+
+    movieList.innerHTML =
+      '<div class="empty">Loading movies...</div>';
+
+    try {
+      const response =
+        await fetch("/.netlify/functions/movies");
+
+      if (!response.ok) {
+        throw new Error("Could not load movies.");
+      }
+
+      const movies = await response.json();
+      allMovies = Array.isArray(movies) ? movies : [];
+
+      updateStats();
+      renderMovieList(allMovies);
+
+    } catch (error) {
+      allMovies = [];
+      updateStats();
+      movieList.innerHTML =
+        `<div class="empty">❌ ${escapeHtml(error.message)}</div>`;
+    }
+  }
+
+  function updateStats() {
+    const languages = new Set(allMovies.map(m => m.language).filter(Boolean));
+    const genres = new Set(allMovies.map(m => m.genre).filter(Boolean));
+    const media = allMovies.filter(m => m.video_url || m.trailer_url).length;
+
+    document.getElementById("statTotal").textContent = allMovies.length;
+    document.getElementById("statLanguages").textContent = languages.size;
+    document.getElementById("statGenres").textContent = genres.size;
+    document.getElementById("statMedia").textContent = media;
+  }
+
+  function renderMovieList(list) {
+    if (!list.length) {
+      movieList.innerHTML =
+        '<div class="empty">No matching movies found.</div>';
+      return;
+    }
+
+    movieList.innerHTML = list.map(function (movie) {
+      return `
+        <div class="movie-item">
+          <div class="movie-main">
+            <img class="movie-thumb" src="${escapeHtml(movie.poster || "")}" alt="">
+            <div class="movie-info">
+              <strong>${escapeHtml(movie.title)}</strong>
+              <small>
+                ${escapeHtml(movie.year)} • ${escapeHtml(movie.genre)} •
+                ${escapeHtml(movie.language)} • ⭐ ${escapeHtml(movie.rating)}
+                ${movie.video_url ? " • 🎬 Video" : ""}
+                ${movie.trailer_url ? " • 🎞️ Trailer" : ""}
+              </small>
+            </div>
+          </div>
+          <div class="movie-actions">
+            <button class="secondary" type="button" onclick="editMovie(${Number(movie.id)})">✏️ Edit</button>
+            <button class="danger" type="button" onclick="deleteMovie(${Number(movie.id)})">🗑️ Delete</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  document.getElementById("movieSearch").addEventListener("input", function () {
+    const q = this.value.toLowerCase().trim();
+    if (!q) {
+      renderMovieList(allMovies);
+      return;
+    }
+
+    renderMovieList(allMovies.filter(movie =>
+      [movie.title, movie.genre, movie.language, movie.director, movie.cast_members]
+        .join(" ")
+        .toLowerCase()
+        .includes(q)
+    ));
+  });
+
+  function fillMovieForm(movie) {
+    document.getElementById("title").value = movie.title || "";
+    document.getElementById("year").value = movie.year || "";
+    document.getElementById("genre").value = movie.genre || "";
+    document.getElementById("language").value = movie.language || "";
+    document.getElementById("rating").value = movie.rating ?? "";
+    document.getElementById("director").value = movie.director || "";
+    document.getElementById("cast_members").value = movie.cast_members || "";
+    document.getElementById("description").value = movie.description || "";
+    document.getElementById("poster").value = movie.poster || "";
+    document.getElementById("backdrop").value = movie.backdrop || "";
+    document.getElementById("trailerUrl").value = movie.trailer_url || "";
+    document.getElementById("movieVideoUrl").value = movie.video_url || "";
+
+    showExistingPreview("posterPreview", movie.poster);
+    showExistingPreview("backdropPreview", movie.backdrop);
+    showExistingPreview("trailerPreview", movie.trailer_url);
+    showExistingPreview("movieVideoPreview", movie.video_url);
+  }
+
+  function showExistingPreview(id, url) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (url) {
+      el.src = url;
+      el.style.display = "block";
+    } else {
+      el.removeAttribute("src");
+      el.style.display = "none";
+    }
+  }
+
+  function resetMovieForm() {
+    editingMovieId = null;
+    document.getElementById("movieFormHeading").textContent = "➕ Add New Movie";
+    document.getElementById("addMovieBtn").textContent = "Add Movie";
+    document.getElementById("editMode").classList.remove("show");
+    document.getElementById("cancelEditBtn2").classList.add("hidden");
+    document.getElementById("editingTitle").textContent = "Movie";
+
+    document.querySelectorAll(
+      "#title,#year,#genre,#language,#rating,#director,#cast_members,#description,#poster,#backdrop"
+    ).forEach(input => input.value = "");
+
+    document.getElementById("trailerUrl").value = "";
+    document.getElementById("movieVideoUrl").value = "";
+    document.querySelectorAll("#posterFile,#backdropFile,#trailerFile,#movieVideoFile")
+      .forEach(input => input.value = "");
+
+    ["posterPreview","backdropPreview","trailerPreview","movieVideoPreview"]
+      .forEach(id => {
+        const el = document.getElementById(id);
+        el.removeAttribute("src");
+        el.style.display = "none";
+      });
+  }
+
+  window.editMovie = function (id) {
+    const movie = allMovies.find(m => Number(m.id) === Number(id));
+    if (!movie) return;
+
+    editingMovieId = Number(id);
+    fillMovieForm(movie);
+    document.getElementById("movieFormHeading").textContent = "✏️ Edit Movie";
+    document.getElementById("addMovieBtn").textContent = "Save Changes";
+    document.getElementById("editMode").classList.add("show");
+    document.getElementById("cancelEditBtn2").classList.remove("hidden");
+    document.getElementById("editingTitle").textContent = movie.title || "Movie";
+    document.getElementById("movieStatus").textContent = "Editing movie. Update the fields and save.";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  window.deleteMovie = async function (id) {
+    const movie = allMovies.find(m => Number(m.id) === Number(id));
+    if (!movie) return;
+
+    if (!confirm(`Delete "${movie.title}" from CineWeb?\n\nThis removes the movie record. Continue?`)) {
+      return;
+    }
+
+    movieStatus.textContent = "Deleting movie...";
+
+    try {
+      const { data } = await supabaseClient.auth.getSession();
+      if (!data.session) {
+        showLogin();
+        return;
+      }
+
+      const response = await fetch("/.netlify/functions/admin-movies", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + data.session.access_token
+        },
+        body: JSON.stringify({ id: Number(id) })
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Failed to delete movie.");
+
+      movieStatus.textContent = "✅ Movie deleted successfully.";
+      if (editingMovieId === Number(id)) resetMovieForm();
+      await loadMovies();
+
+    } catch (error) {
+      console.error("Delete movie error:", error);
+      movieStatus.textContent = "❌ " + (error.message || "Delete failed.");
+    }
+  };
+
+  document.getElementById("cancelEditBtn").addEventListener("click", function () {
+    resetMovieForm();
+    movieStatus.textContent = "Edit cancelled.";
+  });
+
+  document.getElementById("cancelEditBtn2").addEventListener("click", function () {
+    resetMovieForm();
+    movieStatus.textContent = "Edit cancelled.";
+  });
+
+  /* =====================================================
+     STORAGE UPLOAD
+     ===================================================== */
+
+  async function uploadMedia(options) {
+
+    const {
+      fileInputId,
+      bucketName,
+      statusId,
+      urlInputId,
+      previewId,
+      progressWrapId,
+      progressId,
+      progressLabelId
+    } = options;
+
+    const fileInput =
+      document.getElementById(fileInputId);
+
+    const status =
+      document.getElementById(statusId);
+
+    const urlInput =
+      document.getElementById(urlInputId);
+
+    const progressWrap =
+      progressWrapId
+        ? document.getElementById(progressWrapId)
+        : null;
+
+    const progress =
+      progressId
+        ? document.getElementById(progressId)
+        : null;
+
+    const progressLabel =
+      progressLabelId
+        ? document.getElementById(progressLabelId)
+        : null;
+
+    if (!fileInput.files || !fileInput.files[0]) {
+      status.textContent = "❌ Select a file first.";
+      return;
+    }
+
+    const file = fileInput.files[0];
+
+    try {
+
+      const {
+        data: { session }
+      } = await supabaseClient.auth.getSession();
+
+      if (!session) {
+        status.textContent =
+          "❌ Your login session has expired.";
+        showLogin();
+        return;
+      }
+
+      status.textContent = "⏳ Uploading...";
+
+      if (progressWrap) {
+        progressWrap.classList.add("show");
+        progress.value = 0;
+        progressLabel.textContent = "Uploading...";
+      }
+
+      const safeName =
+        file.name
+          .toLowerCase()
+          .replace(/[^a-z0-9._-]/g, "-");
+
+      const filePath =
+        session.user.id +
+        "/" +
+        Date.now() +
+        "-" +
+        safeName;
+
+      /*
+        Standard Supabase upload.
+
+        For very large full-length movie files, we will later
+        switch this bucket to resumable/TUS uploading.
+      */
+
+      const { error: uploadError } =
+        await supabaseClient.storage
+          .from(bucketName)
+          .upload(
+            filePath,
+            file,
+            {
+              cacheControl: "3600",
+              upsert: false,
+              contentType: file.type
+            }
+          );
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      if (progress) {
+        progress.value = 100;
+      }
+
+      if (progressLabel) {
+        progressLabel.textContent = "100%";
+      }
+
+      const { data } =
+        supabaseClient.storage
+          .from(bucketName)
+          .getPublicUrl(filePath);
+
+      if (!data || !data.publicUrl) {
+        throw new Error(
+          "Could not create the public file URL."
+        );
+      }
+
+      urlInput.value = data.publicUrl;
+
+      status.textContent =
+        "✅ Upload complete.";
+
+      if (previewId) {
+
+        const preview =
+          document.getElementById(previewId);
+
+        preview.src =
+          data.publicUrl;
+
+        preview.style.display =
+          "block";
+      }
+
+    } catch (error) {
+
+      console.error("Upload error:", error);
+
+      status.textContent =
+        "❌ " +
+        (error.message || "Upload failed.");
+
+      if (progressWrap) {
+        progressWrap.classList.remove("show");
+      }
+    }
+  }
+
+  /* Poster upload */
+
+  document
+    .getElementById("uploadPosterBtn")
+    .addEventListener("click", function () {
+
+      uploadMedia({
+        fileInputId: "posterFile",
+        bucketName: "movie-posters",
+        statusId: "posterUploadStatus",
+        urlInputId: "poster",
+        previewId: "posterPreview"
+      });
+    });
+
+  /* Backdrop upload */
+
+  document
+    .getElementById("uploadBackdropBtn")
+    .addEventListener("click", function () {
+
+      uploadMedia({
+        fileInputId: "backdropFile",
+        bucketName: "movie-backdrops",
+        statusId: "backdropUploadStatus",
+        urlInputId: "backdrop",
+        previewId: "backdropPreview"
+      });
+    });
+
+  /* Trailer upload */
+
+  document
+    .getElementById("uploadTrailerBtn")
+    .addEventListener("click", function () {
+
+      uploadMedia({
+        fileInputId: "trailerFile",
+        bucketName: "movie-trailers",
+        statusId: "trailerUploadStatus",
+        urlInputId: "trailerUrl",
+        previewId: "trailerPreview",
+        progressWrapId: "trailerProgressWrap",
+        progressId: "trailerProgress",
+        progressLabelId: "trailerProgressLabel"
+      });
+    });
+
+  /* Full movie upload */
+
+  document
+    .getElementById("uploadMovieVideoBtn")
+    .addEventListener("click", function () {
+
+      uploadMedia({
+        fileInputId: "movieVideoFile",
+        bucketName: "movie-videos",
+        statusId: "movieVideoUploadStatus",
+        urlInputId: "movieVideoUrl",
+        previewId: "movieVideoPreview",
+        progressWrapId: "movieVideoProgressWrap",
+        progressId: "movieVideoProgress",
+        progressLabelId: "movieVideoProgressLabel"
+      });
+    });
+
+  /* =====================================================
+     ADD MOVIE
+     ===================================================== */
+
+  document
+    .getElementById("addMovieBtn")
+    .addEventListener("click", async function () {
+
+      movieStatus.textContent = editingMovieId
+        ? "Saving changes..."
+        : "Adding movie...";
+
+      const movie = {
+        title: document.getElementById("title").value.trim(),
+        year: document.getElementById("year").value,
+        genre: document.getElementById("genre").value.trim(),
+        language: document.getElementById("language").value.trim(),
+        rating: document.getElementById("rating").value,
+        director: document.getElementById("director").value.trim(),
+        cast_members: document.getElementById("cast_members").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        poster: document.getElementById("poster").value.trim(),
+        backdrop: document.getElementById("backdrop").value.trim(),
+        trailer_url: document.getElementById("trailerUrl").value.trim(),
+        video_url: document.getElementById("movieVideoUrl").value.trim()
+      };
+
+      const requiredFields = [
+        "title","year","genre","language","rating",
+        "director","cast_members","description","poster","backdrop"
+      ];
+
+      for (const key of requiredFields) {
+        if (!movie[key]) {
+          movieStatus.textContent = "❌ Please fill in all required movie fields.";
+          return;
+        }
+      }
+
+      const rating = Number(movie.rating);
+      const year = Number(movie.year);
+      if (!Number.isFinite(rating) || rating < 0 || rating > 10) {
+        movieStatus.textContent = "❌ Rating must be between 0 and 10.";
+        return;
+      }
+      if (!Number.isInteger(year) || year < 1888 || year > 2100) {
+        movieStatus.textContent = "❌ Enter a valid release year.";
+        return;
+      }
+
+      try {
+        const { data } = await supabaseClient.auth.getSession();
+        if (!data.session) {
+          movieStatus.textContent = "❌ Your login session has expired.";
+          showLogin();
+          return;
+        }
+
+        if (editingMovieId !== null) movie.id = editingMovieId;
+
+        const response = await fetch("/.netlify/functions/admin-movies", {
+          method: editingMovieId !== null ? "PATCH" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + data.session.access_token
+          },
+          body: JSON.stringify(movie)
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || "Failed to save movie.");
+        }
+
+        movieStatus.textContent = editingMovieId !== null
+          ? "✅ Movie updated successfully."
+          : "✅ Movie added successfully.";
+
+        resetMovieForm();
+        await loadMovies();
+
+      } catch (error) {
+        console.error("Save movie error:", error);
+        movieStatus.textContent = "❌ " + (error.message || "Failed to save movie.");
+      }
+    });
+
+  /* =====================================================
+     ESCAPE HTML
+     ===================================================== */
+
+  function escapeHtml(value) {
+
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  /* =====================================================
+     AUTH STATE
+     ===================================================== */
+
+  supabaseClient.auth.onAuthStateChange(
+    function (_event, session) {
+
+      if (session) {
+        showDashboard();
+      } else {
+        showLogin();
+      }
+    }
+  );
+
+  /* =====================================================
+     INITIAL SESSION CHECK
+     ===================================================== */
+
+  async function checkSession() {
+
+    try {
+
+      const { data, error } =
+        await supabaseClient.auth.getSession();
+
+      if (error) {
+        console.error(error);
+        showLogin();
+        return;
+      }
+
+      if (data.session) {
+        showDashboard();
+      } else {
+        showLogin();
+      }
+
+    } catch (error) {
+
+      console.error(error);
+      showLogin();
+    }
+  }
+
+  checkSession();
+
+</script>
+
+</body>
+</html>
