@@ -6,7 +6,6 @@
 
   <title>CineWeb Admin</title>
 
-  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -19,7 +18,7 @@
     body {
       font-family: Arial, sans-serif;
       background: #0b0b0b;
-      color: white;
+      color: #fff;
       min-height: 100vh;
     }
 
@@ -31,9 +30,6 @@
       justify-content: space-between;
       align-items: center;
       gap: 15px;
-      position: sticky;
-      top: 0;
-      z-index: 10;
     }
 
     .logo {
@@ -57,6 +53,24 @@
       font-size: 14px;
     }
 
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 13px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #ff0000;
+      color: white;
+    }
+
+    .primary:hover {
+      background: #d90000;
+    }
+
     .logout {
       background: #292929;
       color: white;
@@ -64,7 +78,7 @@
       padding: 9px 14px;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 700;
     }
 
     .container {
@@ -102,8 +116,7 @@
     }
 
     input,
-    textarea,
-    select {
+    textarea {
       width: 100%;
       background: #0d0d0d;
       color: white;
@@ -115,8 +128,7 @@
     }
 
     input:focus,
-    textarea:focus,
-    select:focus {
+    textarea:focus {
       border-color: #ff0000;
     }
 
@@ -129,40 +141,16 @@
       grid-column: 1 / -1;
     }
 
-    button {
-      border: none;
-      border-radius: 8px;
-      padding: 13px 20px;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .primary {
-      background: #ff0000;
-      color: white;
-    }
-
-    .primary:hover {
-      background: #d90000;
-    }
-
-    .secondary {
-      background: #292929;
-      color: white;
-    }
-
     .status {
       margin-top: 14px;
       color: #aaa;
       min-height: 20px;
+      line-height: 1.5;
     }
 
     .hidden {
       display: none !important;
     }
-
-    /* LOGIN */
 
     #loginScreen {
       min-height: 100vh;
@@ -183,7 +171,6 @@
 
     .login-card h1 {
       font-size: 28px;
-      margin-top: 18px;
       margin-bottom: 8px;
     }
 
@@ -200,18 +187,12 @@
       width: 100%;
     }
 
-    /* MOVIE LIST */
-
     .movie-list {
       display: grid;
       gap: 12px;
     }
 
     .movie-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
       padding: 15px;
       background: #0e0e0e;
       border: 1px solid #292929;
@@ -233,7 +214,6 @@
     }
 
     @media (max-width: 700px) {
-
       header {
         padding: 14px;
       }
@@ -265,30 +245,23 @@
       .card {
         padding: 17px;
       }
-
-      .movie-item {
-        align-items: flex-start;
-        flex-direction: column;
-      }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- =========================
-       LOGIN SCREEN
-  ========================== -->
-
+  <!-- LOGIN -->
   <section id="loginScreen">
-
     <div class="login-card">
 
       <div class="logo">
         Cine<span>Web</span> Admin
       </div>
 
-      <h1>Admin Login</h1>
+      <h1 style="margin-top:18px">
+        Admin Login
+      </h1>
 
       <p>
         Sign in to manage CineWeb movies.
@@ -298,39 +271,32 @@
         id="loginEmail"
         type="email"
         placeholder="Admin email"
+        autocomplete="email"
       >
 
       <input
         id="loginPassword"
         type="password"
         placeholder="Password"
+        autocomplete="current-password"
       >
 
       <button
         id="loginBtn"
         class="primary"
+        type="button"
       >
         Login
       </button>
 
-      <div
-        id="loginStatus"
-        class="status"
-      ></div>
+      <div id="loginStatus" class="status"></div>
 
     </div>
-
   </section>
 
 
-  <!-- =========================
-       ADMIN DASHBOARD
-  ========================== -->
-
-  <div
-    id="dashboard"
-    class="hidden"
-  >
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="hidden">
 
     <header>
 
@@ -350,6 +316,7 @@
         <button
           id="logoutBtn"
           class="logout"
+          type="button"
         >
           Logout
         </button>
@@ -371,7 +338,6 @@
 
 
       <!-- ADD MOVIE -->
-
       <section class="card">
 
         <h2>
@@ -453,10 +419,10 @@
           id="addMovieBtn"
           class="primary"
           style="margin-top:18px"
+          type="button"
         >
           Add Movie
         </button>
-
 
         <div
           id="movieStatus"
@@ -467,7 +433,6 @@
 
 
       <!-- MOVIE LIST -->
-
       <section class="card">
 
         <h2>
@@ -478,11 +443,9 @@
           id="movieList"
           class="movie-list"
         >
-
           <div class="empty">
             Loading movies...
           </div>
-
         </div>
 
       </section>
@@ -492,35 +455,598 @@
   </div>
 
 
-  <!-- =========================
-       JAVASCRIPT
-  ========================== -->
+<script>
 
-  <script>
+  /*
+    =====================================================
+    SUPABASE CONFIGURATION
+    =====================================================
 
-    /*
-      IMPORTANT:
+    Use the PUBLIC Supabase project URL.
 
-      Use your SUPABASE PUBLISHABLE KEY here.
+    NEVER put your Supabase SECRET KEY here.
+  */
 
-      NEVER put the SUPABASE SECRET KEY here.
-    */
-
-    const SUPABASE_PROJECT_REF = "euutkrnurpbefkabchqj";
-const SUPABASE_URL = `https://${SUPABASE_PROJECT_REF}.supabase.co`;
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_pcFHoFBbZ70MbxgcBA9w-w_cBQ_SAAI";
+  const SUPABASE_URL =
+    "https://euutkrnurpbefkabchqj.supabase.co";
 
 
-    const supabaseClient =
+  /*
+    IMPORTANT:
+    Put your EXISTING SUPABASE PUBLISHABLE KEY below.
+
+    Do NOT use sb_secret_...
+  */
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+
+
+  /*
+    =====================================================
+    CHECK SUPABASE LIBRARY
+    =====================================================
+  */
+
+  const loginStatus =
+    document.getElementById("loginStatus");
+
+  if (!window.supabase) {
+
+    loginStatus.textContent =
+      "❌ Supabase library failed to load. Please refresh the page.";
+
+    throw new Error(
+      "Supabase JavaScript library was not loaded."
+    );
+  }
+
+
+  /*
+    =====================================================
+    CREATE SUPABASE CLIENT
+    =====================================================
+  */
+
+  let supabaseClient;
+
+  try {
+
+    supabaseClient =
       window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_PUBLISHABLE_KEY
       );
 
+  } catch (error) {
 
-    const loginScreen =
-      document.getElementById("loginScreen");
+    loginStatus.textContent =
+      "❌ Supabase configuration error.";
 
-    const dashboard =
-      document.getElementById("dashboard");
+    console.error(
+      "Supabase client error:",
+      error
+    );
+
+    throw error;
+  }
+
+
+  /*
+    =====================================================
+    DOM ELEMENTS
+    =====================================================
+  */
+
+  const loginScreen =
+    document.getElementById("loginScreen");
+
+  const dashboard =
+    document.getElementById("dashboard");
+
+  const movieStatus =
+    document.getElementById("movieStatus");
+
+  const movieList =
+    document.getElementById("movieList");
+
+
+  /*
+    =====================================================
+    SHOW DASHBOARD
+    =====================================================
+  */
+
+  function showDashboard() {
+
+    loginScreen.classList.add("hidden");
+
+    dashboard.classList.remove("hidden");
+
+    loadMovies();
+  }
+
+
+  /*
+    =====================================================
+    SHOW LOGIN
+    =====================================================
+  */
+
+  function showLogin() {
+
+    dashboard.classList.add("hidden");
+
+    loginScreen.classList.remove("hidden");
+  }
+
+
+  /*
+    =====================================================
+    LOGIN
+    =====================================================
+  */
+
+  document
+    .getElementById("loginBtn")
+    .addEventListener("click", async function () {
+
+      const email =
+        document
+          .getElementById("loginEmail")
+          .value
+          .trim();
+
+      const password =
+        document
+          .getElementById("loginPassword")
+          .value;
+
+
+      if (!email || !password) {
+
+        loginStatus.textContent =
+          "❌ Enter your email and password.";
+
+        return;
+      }
+
+
+      /*
+        Show this immediately.
+        This also confirms that the button
+        JavaScript is working.
+      */
+
+      loginStatus.textContent =
+        "Signing in...";
+
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
+
+
+        if (error) {
+
+          console.error(
+            "Supabase login error:",
+            error
+          );
+
+          loginStatus.textContent =
+            "❌ " + error.message;
+
+          return;
+        }
+
+
+        if (!data || !data.session) {
+
+          loginStatus.textContent =
+            "❌ Login failed: no session was returned.";
+
+          return;
+        }
+
+
+        loginStatus.textContent =
+          "✅ Login successful.";
+
+        showDashboard();
+
+      } catch (error) {
+
+        console.error(
+          "Login error:",
+          error
+        );
+
+        loginStatus.textContent =
+          "❌ " +
+          (error.message ||
+           "Unable to connect to Supabase.");
+      }
+
+    });
+
+
+  /*
+    =====================================================
+    LOGOUT
+    =====================================================
+  */
+
+  document
+    .getElementById("logoutBtn")
+    .addEventListener("click", async function () {
+
+      await supabaseClient.auth.signOut();
+
+      showLogin();
+    });
+
+
+  /*
+    =====================================================
+    LOAD MOVIES
+    =====================================================
+  */
+
+  async function loadMovies() {
+
+    movieList.innerHTML =
+      '<div class="empty">Loading movies...</div>';
+
+
+    try {
+
+      const response =
+        await fetch(
+          "/.netlify/functions/movies"
+        );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          "Could not load movies."
+        );
+      }
+
+
+      const movies =
+        await response.json();
+
+
+      if (
+        !Array.isArray(movies) ||
+        movies.length === 0
+      ) {
+
+        movieList.innerHTML =
+          '<div class="empty">No movies found.</div>';
+
+        return;
+      }
+
+
+      movieList.innerHTML =
+        movies
+          .map(function (movie) {
+
+            return `
+              <div class="movie-item">
+
+                <div class="movie-info">
+
+                  <strong>
+                    ${escapeHtml(movie.title)}
+                  </strong>
+
+                  <small>
+                    ${escapeHtml(movie.year)}
+                    •
+                    ${escapeHtml(movie.genre)}
+                    •
+                    ${escapeHtml(movie.language)}
+                    •
+                    ⭐ ${escapeHtml(movie.rating)}
+                  </small>
+
+                </div>
+
+              </div>
+            `;
+
+          })
+          .join("");
+
+    } catch (error) {
+
+      movieList.innerHTML =
+        `<div class="empty">
+          ❌ ${escapeHtml(error.message)}
+        </div>`;
+    }
+  }
+
+
+  /*
+    =====================================================
+    ADD MOVIE
+    =====================================================
+  */
+
+  document
+    .getElementById("addMovieBtn")
+    .addEventListener("click", async function () {
+
+      movieStatus.textContent =
+        "Adding movie...";
+
+
+      const movie = {
+
+        title:
+          document
+            .getElementById("title")
+            .value
+            .trim(),
+
+        year:
+          document
+            .getElementById("year")
+            .value,
+
+        genre:
+          document
+            .getElementById("genre")
+            .value
+            .trim(),
+
+        language:
+          document
+            .getElementById("language")
+            .value
+            .trim(),
+
+        rating:
+          document
+            .getElementById("rating")
+            .value,
+
+        director:
+          document
+            .getElementById("director")
+            .value
+            .trim(),
+
+        cast_members:
+          document
+            .getElementById("cast_members")
+            .value
+            .trim(),
+
+        description:
+          document
+            .getElementById("description")
+            .value
+            .trim(),
+
+        poster:
+          document
+            .getElementById("poster")
+            .value
+            .trim(),
+
+        backdrop:
+          document
+            .getElementById("backdrop")
+            .value
+            .trim()
+      };
+
+
+      for (const key in movie) {
+
+        if (!movie[key]) {
+
+          movieStatus.textContent =
+            "❌ Please fill in all movie fields.";
+
+          return;
+        }
+      }
+
+
+      try {
+
+        const {
+          data
+        } =
+          await supabaseClient.auth.getSession();
+
+
+        if (!data.session) {
+
+          movieStatus.textContent =
+            "❌ Your login session has expired.";
+
+          showLogin();
+
+          return;
+        }
+
+
+        const response =
+          await fetch(
+            "/.netlify/functions/admin-movies",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+
+                "Authorization":
+                  "Bearer " +
+                  data.session.access_token
+              },
+
+              body:
+                JSON.stringify(movie)
+            }
+          );
+
+
+        const result =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            result.error ||
+            "Failed to add movie."
+          );
+        }
+
+
+        movieStatus.textContent =
+          "✅ Movie added successfully.";
+
+
+        document
+          .querySelectorAll(
+            "#title,#year,#genre,#language,#rating,#director,#cast_members,#description,#poster,#backdrop"
+          )
+          .forEach(function (input) {
+
+            input.value = "";
+
+          });
+
+
+        await loadMovies();
+
+
+      } catch (error) {
+
+        console.error(
+          "Add movie error:",
+          error
+        );
+
+        movieStatus.textContent =
+          "❌ " +
+          (error.message ||
+           "Failed to add movie.");
+      }
+
+    });
+
+
+  /*
+    =====================================================
+    ESCAPE HTML
+    =====================================================
+  */
+
+  function escapeHtml(value) {
+
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+
+  /*
+    =====================================================
+    AUTH STATE
+    =====================================================
+  */
+
+  supabaseClient.auth.onAuthStateChange(
+    function (_event, session) {
+
+      if (session) {
+
+        showDashboard();
+
+      } else {
+
+        showLogin();
+      }
+
+    }
+  );
+
+
+  /*
+    =====================================================
+    INITIAL SESSION CHECK
+    =====================================================
+  */
+
+  async function checkSession() {
+
+    try {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient.auth.getSession();
+
+
+      if (error) {
+
+        console.error(
+          "Session check error:",
+          error
+        );
+
+        showLogin();
+
+        return;
+      }
+
+
+      if (data.session) {
+
+        showDashboard();
+
+      } else {
+
+        showLogin();
+      }
+
+    } catch (error) {
+
+      console.error(
+        "Session error:",
+        error
+      );
+
+      showLogin();
+    }
+  }
+
+
+  checkSession();
+
+</script>
+
+</body>
+</html>
