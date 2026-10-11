@@ -1,18 +1,17 @@
+
 exports.handler = async function () {
   try {
     const supabaseUrl = process.env.SUPABASE_PUBLIC_URL;
     const supabaseKey =
-      process.env.SUPABASE_SECRET_KEY ||
-      process.env.SUPABASE_SERVICE_ROLE_KEY;
+      process.env.SUPABASE_PUBLISHABLE_KEY ||
+      process.env.SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
       return {
         statusCode: 500,
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          error: "Supabase environment variables are missing"
+          error: "Public Supabase configuration is missing."
         })
       };
     }
@@ -22,25 +21,25 @@ exports.handler = async function () {
       {
         method: "GET",
         headers: {
-          "apikey": supabaseKey,
-          "Authorization": `Bearer ${supabaseKey}`,
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
           "Content-Type": "application/json"
         }
       }
     );
 
-    const text = await response.text();
+    const body = await response.text();
 
     if (!response.ok) {
+      console.error("Movie listing request failed:", response.status);
       return {
-        statusCode: response.status,
+        statusCode: 502,
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store"
         },
         body: JSON.stringify({
-          error: "Supabase REST API error",
-          status: response.status,
-          response: text
+          error: "Unable to load movies."
         })
       };
     }
@@ -49,24 +48,17 @@ exports.handler = async function () {
       statusCode: 200,
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-store"
       },
-      body: text
+      body
     };
-
   } catch (error) {
-    console.error("REST connection error:", error);
-
+    console.error("Movie listing error:", error);
     return {
       statusCode: 500,
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        error: error.message,
-        cause: error?.cause?.message || null,
-        code: error?.cause?.code || null
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Internal server error." })
     };
   }
 };
